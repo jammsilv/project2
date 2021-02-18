@@ -54,29 +54,45 @@ int main() {
   bookn = book->getIntegerValue();
   versen = verse->getIntegerValue();
   int chapterNum = chapter->getIntegerValue();
+  string chapterNumText = chapter->getValue();
+  string verseNumText = verse->getValue();
 
   // Convert and check input data
   bool validInput = true;
   bool chapterValid = true;
   bool verseValid = true;
+  bool blankChapter = false;
+  bool blankVerse = false;
   int chapterV = 0;
   int verseV = 0;
   if (chapter != cgi.getElements().end()) {
-	 if (chapterNum > 150) {
-		 chapterValid = false;
-		 validInput = false;
-		 chapterV = 1;
-	 } else if (chapterNum <= 0) {
-		 chapterValid = false;
-		 validInput = false;
-		 chapterV = -1;
-	 } 
-	 if (versen <= 0)
-	 {
-		 verseValid = false;
-		 validInput = false; 
-		 verseV = -1;
-	 }
+	  if (!(chapter->getValue().empty()) && !(verse->getValue().empty())) {
+		  if (chapterNum > 150) {
+			  chapterValid = false;
+			  validInput = false;
+			  chapterV = 1;
+		  }
+		  else if (chapterNum <= 0) {
+			  chapterValid = false;
+			  validInput = false;
+			  chapterV = -1;
+		  }
+		  if (versen <= 0)
+		  {
+			  verseValid = false;
+			  validInput = false;
+			  verseV = -1;
+		  }
+	  }
+	  else {
+		  validInput = false;
+		  if (chapter->getValue().empty()) {
+			  blankChapter = true;
+		  }
+		  if (verse->getValue().empty()) {
+			  blankVerse = true;
+		  }
+	  }
   }
   /* TO DO: OTHER INPUT VALUE CHECKS ARE NEEDED ... but that's up to you! */
 
@@ -135,7 +151,7 @@ int main() {
 	//The " << **nv
 	//	 //<< " actual verse(s) retreived from the server should go here!</em></p>" << endl;
   }
-  else if (!validInput && !chapterValid) {
+  else if (!validInput && !chapterValid && verseValid) {
 	  if (chapterV == 1) {
 		  cout << "<p>Error: the chapter " << chapterNum << " is greater than the largest chapter in a book.</p>" << endl;
 	  }
@@ -143,8 +159,8 @@ int main() {
 		  cout << "<p>Error: the chapter " << chapterNum << " is lower than the smallest chapter in a book.</p>" << endl;
 	  }
   }
-  else if (!validInput && !verseValid) {
-	  cout << "<p>Error: the verse " << chapterNum << " is lower than the smallest verse in a chapter.</p>" << endl;
+  else if (!validInput && chapterValid && !verseValid) {
+	  cout << "<p>Error: the verse " << versen << " is lower than the smallest verse in a chapter.</p>" << endl;
   }
   else if (!validInput && !chapterValid && !verseValid){
 	  if (chapterV == 1) {
@@ -152,6 +168,17 @@ int main() {
 	  }
 	  else {
 		  cout << "<p>Error: the chapter " << chapterNum << " and the verse " << versen <<" are both lower than the smallest possible values for chapters and verses.</p>" << endl;
+	  }
+  }
+  else if (!validInput && (blankChapter || blankVerse)) {
+	  if (blankChapter && !blankVerse) {
+		  cout << "<p>Error: the chapter input box has been left blank, please enter a value into the box to continue.</p>" << endl;
+	  }
+	  else if (!blankChapter && blankVerse) {
+		  cout << "<p>Error: the verse input box has been left blank, please enter a value into the box to continue.</p>" << endl;
+	  }
+	  else {
+		  cout << "<p>Error: the chapter and verse input boxes have been left blank, please enter values into the boxes to continue.</p>" << endl;
 	  }
   }
   else {
