@@ -50,21 +50,34 @@ int main() {
   form_iterator chapter = cgi.getElement("chapter");
   form_iterator verse = cgi.getElement("verse");
   form_iterator nv = cgi.getElement("num_verse");
+  int bookn, versen;
+  bookn = book->getIntegerValue();
+  versen = verse->getIntegerValue();
+  int chapterNum = chapter->getIntegerValue();
 
   // Convert and check input data
-  bool validInput = false;
+  bool validInput = true;
+  bool chapterValid = true;
+  bool verseValid = true;
+  int chapterV = 0;
+  int verseV = 0;
   if (chapter != cgi.getElements().end()) {
-	 int chapterNum = chapter->getIntegerValue();
 	 if (chapterNum > 150) {
-		 cout << "<p>The chapter number (" << chapterNum << ") is too high.</p>" << endl;
+		 chapterValid = false;
+		 validInput = false;
+		 chapterV = 1;
+	 } else if (chapterNum <= 0) {
+		 chapterValid = false;
+		 validInput = false;
+		 chapterV = -1;
+	 } 
+	 if (versen <= 0)
+	 {
+		 verseValid = false;
+		 validInput = false; 
+		 verseV = -1;
 	 }
-	 else if (chapterNum <= 0) {
-		 cout << "<p>The chapter must be a positive number.</p>" << endl;
-	 }
-	 else
-		 validInput = true;
   }
-  
   /* TO DO: OTHER INPUT VALUE CHECKS ARE NEEDED ... but that's up to you! */
 
   /* TO DO: PUT CODE HERE TO CALL YOUR BIBLE CLASS FUNCTIONS
@@ -72,11 +85,7 @@ int main() {
    */
   Bible bible = Bible("/home/class/csc3004/Bibles/web-complete");
   LookupResult result = OTHER;
-  int bookn, chaptern, versen;
-  bookn = book->getIntegerValue();
-  chaptern = chapter->getIntegerValue();
-  versen = book->getIntegerValue();
-  Ref ref = Ref(bookn, chaptern, versen);
+  Ref ref = Ref(bookn, chapterNum, versen);
   int n = nv->getIntegerValue();
   Verse v;
   Ref prev;
@@ -95,28 +104,64 @@ int main() {
 		if (i == 0) {
 			v = bible.lookup(ref, result);
 			a = ref.getBook();
+			string bookName = ref.getBookName();
 			d = ref.getChap();
 			g = ref.getVerse();
-				cout << a << " " << d << ":" << g << "<em> ";
+			if (result != SUCCESS) {
+				break;
+			}
+			cout << "<h2>" << bookName << " " << d << "</h2>";
+				cout << "<p><em> ";
 			v.display();
 			prev = ref;
+			cout << "</em></p>";
 		}
 		else {
 			ref = bible.next(ref, result);
 			a = ref.getBook();
+			string bookName = ref.getBookName();
 			d = ref.getChap();
 			g = ref.getVerse();
-			cout << a << " " << d << ":" << g << "<em> ";
+			if (d != prev.getChap() || a != prev.getBook()) {
+				cout << "<h2>" << bookName << " " << d << "</h2>";
+			}
+			cout << "<p><em> ";
 			v = bible.lookup(ref, result);
 			v.display();
 			prev = ref;
+			cout << "</em></p>";
 		}
 	}
 	//The " << **nv
 	//	 //<< " actual verse(s) retreived from the server should go here!</em></p>" << endl;
   }
+  else if (!validInput && !chapterValid) {
+	  if (chapterV == 1) {
+		  cout << "<p>Error: the chapter " << chapterNum << " is greater than the largest chapter in a book.</p>" << endl;
+	  }
+	  else {
+		  cout << "<p>Error: the chapter " << chapterNum << " is lower than the smallest chapter in a book.</p>" << endl;
+	  }
+  }
+  else if (!validInput && !verseValid) {
+	  cout << "<p>Error: the verse " << chapterNum << " is lower than the smallest verse in a chapter.</p>" << endl;
+  }
+  else if (!validInput && !chapterValid && !verseValid){
+	  if (chapterV == 1) {
+		  cout << "<p>Error: the chapter " << chapterNum << " is too large to be a chapter and the verse " << versen << " is less than the smallest possible verse.</p>" << endl;
+	  }
+	  else {
+		  cout << "<p>Error: the chapter " << chapterNum << " and the verse " << versen <<" are both lower than the smallest possible values for chapters and verses.</p>" << endl;
+	  }
+  }
   else {
-	  cout << "<p>Invalid Input: <em>report the more specific problem.</em></p>" << endl;
+	  cout << "<p>Error: An unexpected error has occurred, one that you shouldn't be seeing. Notify someone if you see this message.</p>" << endl;
+  }
+  if (result == NO_CHAPTER) {
+	  cout << "<p>Error: no such chapter " << ref.getChap() << " in " << ref.getBookName() << "</p>" << endl;
+  }
+  else if (result == NO_VERSE) {
+	  cout << "<p>Error: no such verse " << ref.getVerse() << " in " << ref.getBookName() << " chapter " << ref.getChap() << "</p>" << endl;
   }
   return 0;
 }
