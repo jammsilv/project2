@@ -66,7 +66,7 @@ int main() {
   int chapterV = 0;
   int verseV = 0;
   if (chapter != cgi.getElements().end()) {
-	  if (!(chapter->getValue().empty()) && !(verse->getValue().empty())) {
+	  if (!(chapter->getValue().empty()) && !(verse->getValue().empty())) { //checks if empty
 		  if (chapterNum > 150) {
 			  chapterValid = false;
 			  validInput = false;
@@ -84,7 +84,7 @@ int main() {
 			  verseV = -1;
 		  }
 	  }
-	  else {
+	  else { // runs this if it is
 		  validInput = false;
 		  if (chapter->getValue().empty()) {
 			  blankChapter = true;
