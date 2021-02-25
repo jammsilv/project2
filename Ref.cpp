@@ -75,8 +75,15 @@ bool Ref::operator==(const Ref r)
     return ((book == r.book) && (chap == r.chap) && (verse == r.verse));
 }
 
-bool Ref::operator<(const Ref r) {
-    return  ((book < r.book) || (chap < r.chap) || (verse < r.verse));
+bool Ref::operator<(const Ref& r) const {
+    if (book <= r.book) {
+        if (chap <= r.chap) {
+            if (verse < r.verse) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 // OPTIONAL: define < and > comparisons

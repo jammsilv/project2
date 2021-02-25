@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <map>
 #include <stdio.h>
 #include <stdlib.h>
 using namespace std;
@@ -22,6 +23,7 @@ enum LookupResult { SUCCESS, NO_BOOK, NO_CHAPTER, NO_VERSE, OTHER };
 
 class Bible {	// A class to represent a version of the bible
  private:
+   map<Ref, int> index;
    string infile;		// file path name
    ifstream instream;	// input stream, used when file is open
    bool isOpen;			// true if file is open
@@ -31,7 +33,8 @@ class Bible {	// A class to represent a version of the bible
  public:
    Bible();	// Default constructor
    Bible(const string s); // Constructor – pass name of bible file
-   
+   void buildTextIndex();
+
    // REQUIRED: Find and return a verse in this Bible, given a reference
    const Verse lookup(Ref ref, LookupResult& status); 
    // REQUIRED: Return the reference after the given ref

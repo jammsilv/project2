@@ -4,6 +4,7 @@
 #include "Ref.h"
 #include "Verse.h"
 #include "Bible.h" 
+#include <map>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -13,6 +14,7 @@ using namespace std;
 
 Bible::Bible() { // Default constructor
 	infile = "/home/class/csc3004/Bibles/web-complete";
+	buildTextIndex();
 }
 
 // Constructor – pass bible filename
@@ -20,50 +22,112 @@ Bible::Bible(const string s) { infile = s; }
 
 // REQUIRED: lookup finds a given verse in this Bible
 const Verse Bible::lookup(Ref ref, LookupResult& status) { 
-	ifstream in;
-	string s;
-	bool bookFound = false;
-	bool chapterFound = false;
-	in.open(infile);
-	if (in.is_open()) {
-		while (getline(in, s)) {
-			Ref r = Ref(s);
-			if (r.getBook() == ref.getBook()) {
-				bookFound = true;
-				if (r.getChap() == ref.getChap()) {
-					chapterFound = true;
-					if (r.getVerse() == ref.getVerse()) {
-						in.close();
-						status = SUCCESS;
-						Verse v = Verse(s);
-						return v;
-					}
-				}
+	ifstream instream;
+	map<Ref, int> ::iterator it;
+	Verse none;
+	it = index.find(ref);
+	if (it == index.end()) {
+		Ref q = Ref(ref.getBook(), 1, 1);
+		it = index.find(q);
+		if (it != index.end()) {
+			Ref r = Ref(ref.getBook(), ref.getChap(), 1);
+			it = index.find(r);
+			if (it != index.end()) {
+				status = NO_VERSE;
+			}
+			else {
+				status = NO_CHAPTER;
 			}
 		}
-		in.close();
+		else {
+			status = NO_BOOK;
+		}
 	}
-	if (!bookFound && !chapterFound) {
-		status = NO_BOOK;
+	else {
+		string s; 
+		instream.open(infile);
+		instream.seekg(index[ref]);
+		getline(instream, s);
+		Verse v = Verse(s);
+		instream.close();
+		status = SUCCESS;
+		return v;
 	}
-	if (bookFound && !chapterFound) {
-		status = NO_CHAPTER;
-	}
-	if (bookFound && chapterFound) {
-		status = NO_VERSE;
-	}
+	//ifstream in;
+	//string s;
+	//bool bookFound = false;
+	//bool chapterFound = false;
+	//in.open(infile);
+	//if (in.is_open()) {
+	//	while (getline(in, s)) {
+	//		Ref r = Ref(s);
+	//		if (r.getBook() == ref.getBook()) {
+	//			bookFound = true;
+	//			if (r.getChap() == ref.getChap()) {
+	//				chapterFound = true;
+	//				if (r.getVerse() == ref.getVerse()) {
+	//					in.close();
+	//					status = SUCCESS;
+	//					Verse v = Verse(s);
+	//					return v;
+	//				}
+	//			}
+	//		}
+	//	}
+	//	in.close();
+	//}
+	//if (!bookFound && !chapterFound) {
+	//	status = NO_BOOK;
+	//}
+	//if (bookFound && !chapterFound) {
+	//	status = NO_CHAPTER;
+	//}
+	//if (bookFound && chapterFound) {
+	//	status = NO_VERSE;
+	//}
     // TODO: scan the file to retrieve the line with ref ...
     // update the status variable
 	// create and return the verse object
-	Verse aVerse;
-    return(aVerse);
+    return none;
 }
 //make helper to take over infile stuff
+
+void Bible::buildTextIndex() {
+	ifstream instream;
+	int position, refcount;
+	string line;
+	instream.open(infile);
+	if (!instream) {
+		cerr << "Error - can't open input file: " << infile << endl;
+	}
+	else {
+		while (!instream.fail()) {
+			position = instream.tellg();
+			getline(instream, line);
+			Ref r = Ref(line);
+			refcount++;
+			index[r] = position;
+		}
+		cout << "References: " << refcount << " Unique: " << index.size() << endl;
+	}
+}
 
 
 // REQUIRED: Return the reference after the given ref
 const Ref Bible::next(const Ref ref, LookupResult& status) {
-	ifstream in;
+	/*map<Ref, int> ::iterator it;
+	Ref r;
+	it = index.find(ref);
+	if (it == index.end()) {
+		return r;
+	}
+	else {
+		it++;
+		r = &*it;
+		status = SUCCESS;
+		return r;
+	}*/
+	/*ifstream in;
 	string s;
 	in.open(infile);
 	if (in.is_open()) {
@@ -81,7 +145,7 @@ const Ref Bible::next(const Ref ref, LookupResult& status) {
 	}
 	status = NO_BOOK;
 	Ref aRef;
-	return(aRef);
+	return(aRef);*/
 };
 
 // OPTIONAL: Return the reference before the given ref
