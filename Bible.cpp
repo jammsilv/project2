@@ -23,16 +23,12 @@ Bible::Bible(const string s) { infile = s; }
 // REQUIRED: lookup finds a given verse in this Bible
 const Verse Bible::lookup(Ref ref, LookupResult& status) { 
 	ifstream instream;
-	map<Ref, int> ::iterator it;
 	Verse none;
-	it = index.find(ref);
-	if (it == index.end()) {
+	if (index.count(ref)) {
 		Ref q = Ref(ref.getBook(), 1, 1);
-		it = index.find(q);
-		if (it != index.end()) {
+		if (index.count(q)) {
 			Ref r = Ref(ref.getBook(), ref.getChap(), 1);
-			it = index.find(r);
-			if (it != index.end()) {
+			if (index.count(r)) {
 				status = NO_VERSE;
 			}
 			else {
