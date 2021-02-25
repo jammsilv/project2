@@ -76,12 +76,8 @@ bool Ref::operator==(const Ref r)
 }
 
 bool Ref::operator<(const Ref& r) const {
-    if (book <= r.book) {
-        if (chap <= r.chap) {
-            if (verse < r.verse) {
-                return true;
-            }
-        }
+    if ((book < r.book) || ((book == r.book) && (chap < r.chap)) || ((book == r.book) && (chap == r.chap) && (verse < r.verse))) {
+        return true;
     }
     return false;
 }

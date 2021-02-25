@@ -83,6 +83,10 @@ main (int argc, char **argv) {
 			}
 			else {
 				ref = webBible.next(ref, result);
+				if (result == OTHER) {
+					cout << "Reached last verse while searching." << endl;
+					return EXIT_SUCCESS;
+				}
 				if (prev.getChap() != ref.getChap()) {
 					ref.display();
 				}

@@ -18,13 +18,16 @@ Bible::Bible() { // Default constructor
 }
 
 // Constructor – pass bible filename
-Bible::Bible(const string s) { infile = s; }
+Bible::Bible(const string s) { 
+	infile = s; 
+	buildTextIndex();
+}
 
 // REQUIRED: lookup finds a given verse in this Bible
 const Verse Bible::lookup(Ref ref, LookupResult& status) { 
 	ifstream instream;
 	Verse none;
-	if (index.count(ref)) {
+	if (!index.count(ref)) {
 		Ref q = Ref(ref.getBook(), 1, 1);
 		if (index.count(q)) {
 			Ref r = Ref(ref.getBook(), ref.getChap(), 1);
@@ -100,29 +103,39 @@ void Bible::buildTextIndex() {
 		while (!instream.fail()) {
 			position = instream.tellg();
 			getline(instream, line);
-			Ref r = Ref(line);
-			refcount++;
-			index[r] = position;
+			if (line != "") {
+				Ref r = Ref(line);
+				refcount++;
+				index[r] = position;
+			}
 		}
-		cout << "References: " << refcount << " Unique: " << index.size() << endl;
+		cout << "References: " << refcount << " Unique: " << index.size() << " Byte Offset: " << position << endl;
+		cout << endl;
 	}
 }
 
 
 // REQUIRED: Return the reference after the given ref
 const Ref Bible::next(const Ref ref, LookupResult& status) {
-	/*map<Ref, int> ::iterator it;
+	map<Ref, int> ::iterator it;
 	Ref r;
 	it = index.find(ref);
 	if (it == index.end()) {
+		status = OTHER;
 		return r;
 	}
 	else {
 		it++;
-		r = &*it;
-		status = SUCCESS;
-		return r;
-	}*/
+		if (it != index.end()) {
+			r = it->first;
+			status = SUCCESS;
+			return r;
+		}
+		else {
+			status = OTHER;
+			return r;
+		}
+	}
 	/*ifstream in;
 	string s;
 	in.open(infile);
