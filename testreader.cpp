@@ -1,5 +1,5 @@
-// biblereader.cpp
-// main function for Project 1
+// testreader.cpp
+// main function for Project 3 Part 1
 
 #include "Ref.h"
 #include "Verse.h"

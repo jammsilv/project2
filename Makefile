@@ -3,7 +3,7 @@
 CC= g++
 CFLAGS= -g -std=c++11
 
-all: biblereader
+all: testreader
 
 # Ref Object
 Ref.o : Ref.h Ref.cpp
@@ -18,13 +18,13 @@ Bible.o : Ref.h Verse.h Bible.h Bible.cpp
 	$(CC) $(CFLAGS) -c Bible.cpp
 
 # Main Program source
-biblereader.o : Ref.h Verse.h Bible.h biblereader.cpp
-	$(CC) $(CFLAGS) -c biblereader.cpp
+testreader.o : Ref.h Verse.h Bible.h testreader.cpp
+	$(CC) $(CFLAGS) -c testreader.cpp
 
 # Build the executable
-biblereader: Ref.o Verse.o Bible.o biblereader.o
-	$(CC) $(CFLAGS) -o biblereader Ref.o Verse.o Bible.o biblereader.o
+testreader: Ref.o Verse.o Bible.o testreader.o
+	$(CC) $(CFLAGS) -o testreader Ref.o Verse.o Bible.o testreader.o
 
 # "make clean" will clean up by removing intermediate files
 clean:
-	rm -f *.o biblereader core
+	rm -f *.o titlereader core
