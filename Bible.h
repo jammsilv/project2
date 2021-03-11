@@ -41,6 +41,7 @@ class Bible {	// A class to represent a version of the bible
    const Ref next(const Ref ref, LookupResult& status);
    // OPTIONAL: Return the reference before the given ref
    const Ref prev(const Ref ref, LookupResult& status);
+   const string getInfile();
    
    // Information functions (REQUIRED)
    // Return an error message string to describe status

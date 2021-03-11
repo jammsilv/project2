@@ -103,7 +103,7 @@ void Bible::buildTextIndex() {
 		while (!instream.fail()) {
 			position = instream.tellg();
 			getline(instream, line);
-			if (line != "") {
+			if (!instream.fail()) {
 				Ref r = Ref(line);
 				refcount++;
 				index[r] = position;
@@ -159,6 +159,10 @@ const Ref Bible::next(const Ref ref, LookupResult& status) {
 
 // OPTIONAL: Return the reference before the given ref
 const Ref prev(const Ref ref, LookupResult& status) {};
+
+const string Bible::getInfile() {
+	return infile;
+}
 
 // Return an error message string to describe status
 const string Bible::error(LookupResult status) {};
