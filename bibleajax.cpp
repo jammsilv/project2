@@ -163,9 +163,11 @@ int main() {
 			if (t != "SUCCESS") {
 				if (t == "NO_VERSE") {
 					result = NO_VERSE;
+					break;
 				}
 				else if (t == "NO_CHAPTER") {
 					result = NO_CHAPTER;
+					break;
 				}
 			}
 			else {

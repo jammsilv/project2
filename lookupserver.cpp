@@ -90,10 +90,10 @@ int main() {
 				else {
 					switch (status) {
 					case NO_VERSE:
-						message = "-1 NO_VERSE";
+						message = "NO_VERSE ";
 						break;
 					case NO_CHAPTER:
-						message = "1 NO_CHAPTER";
+						message = "NO_CHAPTER ";
 						break;
 					}
 					sendfifo.send(message);
